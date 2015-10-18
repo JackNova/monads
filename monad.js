@@ -3,8 +3,10 @@
 
     /*Macroid used to define monads*/
     function MONAD() {
-        return function unit(value) {
-            var monad = Object.create(null);
+        var prototype = Object.create(null);
+
+        function unit(value) {
+            var monad = Object.create(prototype);
             monad.bind = function (func, args) {
                 if (args) {
                     return func(value, ...args);
@@ -13,7 +15,14 @@
                 }
             };
             return monad;
+        }
+
+        unit.method = function (name, func) {
+            prototype[name] = func;
+            return unit;
         };
+
+        return unit;
     }
 
     /*Define the identity monad*/
