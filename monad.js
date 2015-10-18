@@ -22,12 +22,22 @@
             return unit;
         };
 
+        unit.lift = function (name, func) {
+            prototype[name] = function () {
+                return unit(this.bind(func, arguments));
+            };
+            return unit;
+        };
+
         return unit;
     }
 
     /*Define the identity monad*/
-    var identity = MONAD();
-    var monad = identity("Hello World");
-    monad.bind(console.log);
+    var ajax = MONAD()
+        .lift('log', console.log);
+
+    var monad = ajax("hello world");
+    monad.log();
+
 
 }());
