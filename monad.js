@@ -2,7 +2,7 @@
     "use strict";
 
     /*Macroid used to define monads*/
-    function MONAD() {
+    function MONAD(modifier) {
         var prototype = Object.create(null);
 
         function unit(value) {
@@ -14,6 +14,11 @@
                     return func(value);
                 }
             };
+
+            if (typeof modifier === 'function') {
+                modifier(monad, value);
+            }
+
             return monad;
         }
 
@@ -37,7 +42,19 @@
         .lift('log', console.log);
 
     var monad = ajax("hello world");
-    monad.log();
+    monad.log('extra argument', 'sexy');
+
+    var maybe = MONAD(function (monad, value) {
+        if (value === null || value === undefined) {
+            monad.is_null = true;
+            monad.bind = function () {
+                return monad;
+            };
+        }
+    });
+
+    monad = maybe(null);
+    monad.bind(console.log);
 
 
 }());
